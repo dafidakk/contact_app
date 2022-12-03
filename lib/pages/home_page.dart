@@ -42,6 +42,10 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: context,
       builder: (context) {
+        firstNameController.clear();
+        lastNameController.clear();
+        emailController.clear();
+        phoneNumberController.clear();
         return DialogBox(
           firstNameController: firstNameController,
           lastNameController: lastNameController,
@@ -67,7 +71,7 @@ class _HomePageState extends State<HomePage> {
             itemCount: contactList.length,
             itemBuilder: ((context, index) {
               return Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0),
                 child: Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
@@ -81,6 +85,8 @@ class _HomePageState extends State<HomePage> {
                           builder: (context) => ContactDetailPage(
                             name: contactList[index].name,
                             lastName: contactList[index].lastName,
+                            emailAddress: contactList[index].emailAddress,
+                            phoneNumber: contactList[index].phoneNumber,
                           ),
                         ),
                       );
@@ -97,6 +103,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: Scaffold(
         appBar: AppBar(
           title: Text(
@@ -107,7 +114,6 @@ class _HomePageState extends State<HomePage> {
         ),
         body: Center(
           child: Container(
-            // https://www.fluttercampus.com/guide/131/how-to-use-conditional-statement-if-else-on-widget-in-flutter/
             child: showwidget(),
           ),
         ),
