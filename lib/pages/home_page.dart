@@ -1,10 +1,14 @@
 import 'package:contact_app/model/model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import '../data/database.dart';
 import '../utils/contact_dialog.dart';
 import 'contact_details.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
   final String title = "Contacts";
 
   @override
@@ -17,35 +21,45 @@ class _HomePageState extends State<HomePage> {
   final emailController = TextEditingController();
   final phoneNumberController = TextEditingController();
 
-  List<Contact> contactList = [];
+  //reference the hive box
 
-  // var _contact = Contact(name: name, lastName: lastName, emailAddress: emailAddress, phoneNumber: phoneNumber)
+  final _myBox = Hive.box('mybox');
+  ContactDataBase db = ContactDataBase();
 
+  @override
+  void initState() {
+    if (_myBox.get("CONTACTLIST") == null) {
+      db.createInitialData();
+    } else {
+      db.loadData();
+    }
+    super.initState();
+  }
+
+  // save contact to database
   void saveNewContact() {
     setState(() {
-      contactList.add(
-        Contact(
-            name: firstNameController.text,
-            lastName: lastNameController.text,
-            emailAddress: emailController.text,
-            phoneNumber: phoneNumberController.text),
-      );
-      firstNameController.clear();
-      lastNameController.clear();
-      emailController.clear();
-      phoneNumberController.clear();
+      var _contact = Contact(
+          name: firstNameController.text,
+          lastName: lastNameController.text,
+          emailAddress: emailController.text,
+          phoneNumber: phoneNumberController.text);
+
+      db.contacts.add(_contact);
+      db.updateDatabase();
       Navigator.of(context).pop();
+      // firstNameController.clear();
+      // lastNameController.clear();
+      // emailController.clear();
+      // phoneNumberController.clear();
     });
   }
 
+  // create contact
   void createNewContact() {
     showDialog(
       context: context,
       builder: (context) {
-        firstNameController.clear();
-        lastNameController.clear();
-        emailController.clear();
-        phoneNumberController.clear();
         return DialogBox(
           firstNameController: firstNameController,
           lastNameController: lastNameController,
@@ -58,8 +72,17 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // delete contact
+  void deleteContact(index) {
+    setState(() {
+      _myBox.delete(index.toString());
+    });
+
+    db.updateDatabase();
+  }
+
   showwidget() {
-    if (contactList.isEmpty) {
+    if (db.contacts.isEmpty) {
       return Text(
         "No Contacts",
         style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
@@ -68,7 +91,7 @@ class _HomePageState extends State<HomePage> {
       //return Card();
       return Scaffold(
         body: ListView.builder(
-            itemCount: contactList.length,
+            itemCount: db.contacts.length,
             itemBuilder: ((context, index) {
               return Padding(
                 padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0),
@@ -76,21 +99,34 @@ class _HomePageState extends State<HomePage> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: Colors.grey)),
-                  child: ListTile(
-                    title: Text(contactList[index].name),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ContactDetailPage(
-                            name: contactList[index].name,
-                            lastName: contactList[index].lastName,
-                            emailAddress: contactList[index].emailAddress,
-                            phoneNumber: contactList[index].phoneNumber,
+                  child: Slidable(
+                    endActionPane: ActionPane(
+                      motion: StretchMotion(),
+                      children: [
+                        SlidableAction(
+                          onPressed: deleteContact,
+                          icon: Icons.delete,
+                          backgroundColor: Colors.red,
+                          borderRadius: BorderRadius.circular(12),
+                        )
+                      ],
+                    ),
+                    child: ListTile(
+                      title: Text(db.contacts[index].name),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ContactDetailPage(
+                              name: db.contacts[index].name,
+                              lastName: db.contacts[index].lastName,
+                              emailAddress: db.contacts[index].emailAddress,
+                              phoneNumber: db.contacts[index].phoneNumber,
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                 ),
               );

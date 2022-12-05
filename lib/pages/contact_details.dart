@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ContactDetailPage extends StatelessWidget {
+class ContactDetailPage extends StatefulWidget {
   final String name;
   final String lastName;
   final String emailAddress;
@@ -13,14 +13,17 @@ class ContactDetailPage extends StatelessWidget {
       required this.emailAddress,
       required this.phoneNumber});
 
-  // Detail sayfasında bir önceki sayfadan gelmesini istediğimiz bilgileri required olarak buraya ekliyoruz.
-  // Önceki sayfada onTap metodunda ContactDetailPage fonksiyonunu verirken required olan propertyleri istiyor zaten oradan gitmek zorunda kalıyoruz
+  @override
+  State<ContactDetailPage> createState() => _ContactDetailPageState();
+}
 
+class _ContactDetailPageState extends State<ContactDetailPage> {
+  // Detail sayfasında bir önceki sayfadan gelmesini istediğimiz bilgileri required olarak buraya ekliyoruz.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(name + " " + lastName),
+        title: Text(widget.name + " " + widget.lastName),
         centerTitle: true,
       ),
       body: Card(
@@ -56,7 +59,7 @@ class ContactDetailPage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(phoneNumber),
+                Text(widget.phoneNumber),
               ],
             ),
             Row(
@@ -73,7 +76,7 @@ class ContactDetailPage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(emailAddress)
+                Text(widget.emailAddress)
               ],
             ),
           ],

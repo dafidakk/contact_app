@@ -3,7 +3,7 @@ import 'my_button.dart';
 import 'package:flutter/services.dart';
 
 // ignore: must_be_immutable
-class DialogBox extends StatelessWidget {
+class DialogBox extends StatefulWidget {
   // ignore: prefer_typing_uninitialized_variables
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
@@ -22,6 +22,11 @@ class DialogBox extends StatelessWidget {
       required this.onSave});
 
   @override
+  State<DialogBox> createState() => _DialogBoxState();
+}
+
+class _DialogBoxState extends State<DialogBox> {
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Center(
@@ -35,7 +40,7 @@ class DialogBox extends StatelessWidget {
           children: [
             //get user input
             TextFormField(
-              controller: firstNameController,
+              controller: widget.firstNameController,
               decoration: const InputDecoration(hintText: "First Name"),
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
@@ -45,7 +50,7 @@ class DialogBox extends StatelessWidget {
               },
             ),
             TextFormField(
-              controller: lastNameController,
+              controller: widget.lastNameController,
               decoration: const InputDecoration(hintText: "Last Name"),
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
@@ -55,7 +60,7 @@ class DialogBox extends StatelessWidget {
               },
             ),
             TextFormField(
-              controller: emailController,
+              controller: widget.emailController,
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 hintText: 'Email Adress',
@@ -68,7 +73,7 @@ class DialogBox extends StatelessWidget {
               },
             ),
             TextFormField(
-              controller: phoneNumberController,
+              controller: widget.phoneNumberController,
               decoration: InputDecoration(labelText: "Phone Number"),
               keyboardType: TextInputType.number,
               inputFormatters: <TextInputFormatter>[
@@ -81,13 +86,13 @@ class DialogBox extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 //cancel button
-                MyButton(text: "Cancel", onPressed: onCancel),
+                MyButton(text: "Cancel", onPressed: widget.onCancel),
 
                 const SizedBox(
                   width: 25,
                 ),
                 //save button
-                MyButton(text: "Add", onPressed: onSave),
+                MyButton(text: "Add", onPressed: widget.onSave),
               ],
             )
           ],

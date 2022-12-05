@@ -1,7 +1,18 @@
 import 'package:contact_app/pages/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+import 'model/model.dart';
+
+void main() async {
+  // init the hive
+  await Hive.initFlutter();
+
+  Hive.registerAdapter(ContactAdapter());
+
+  // open a box
+  var box = await Hive.openBox('mybox');
+
   runApp(MaterialApp(home: MyApp()));
 }
 
