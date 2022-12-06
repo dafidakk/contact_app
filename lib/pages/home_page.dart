@@ -74,11 +74,12 @@ class _HomePageState extends State<HomePage> {
 
   // delete contact
   void deleteContact(index) {
+    // db.contacts[index];
+    // db.updateDatabase();
     setState(() {
-      _myBox.delete(index.toString());
+      db.contacts.removeAt(index);
+      db.updateDatabase();
     });
-
-    db.updateDatabase();
   }
 
   showwidget() {
@@ -104,10 +105,14 @@ class _HomePageState extends State<HomePage> {
                       motion: StretchMotion(),
                       children: [
                         SlidableAction(
-                          onPressed: deleteContact,
+                          onPressed: (context) {
+                            deleteContact(index);
+                          },
                           icon: Icons.delete,
                           backgroundColor: Colors.red,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(5),
+                          autoClose: true,
+                          spacing: 5,
                         )
                       ],
                     ),

@@ -15,15 +15,16 @@ class ContactDataBase {
         phoneNumber: 'phoneNumber');
     contacts.add(_contact);
   }
-  //load the data from database
 
+  //load the data from database
   void loadData() {
     contacts = _myBox.get("CONTACTLIST");
   }
 
   // update the database
-
   void updateDatabase() {
     _myBox.put("CONTACTLIST", contacts);
   }
+
+  void deleteFromDatabase() {}
 }
